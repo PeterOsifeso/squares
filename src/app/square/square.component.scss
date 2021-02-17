@@ -1,0 +1,25 @@
+$square-margin: 10px auto;
+$square-size: 150px;
+$border-size: 1px;
+$border-color: #d3d3d3;
+$text-padding: 2px;
+$font-size: 15pt;
+
+.square-container {
+  width: $square-size;
+  height: $square-size;
+  border: $border-size solid $border-color;
+  margin: $square-margin;
+
+  text-align: center;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-size: $font-size;
+  user-select: none;
+  padding: $text-padding;
+  font-family: "Helvetica Neue", serif;
+}
+
+.centralize {
+  line-height: $square-size - ((2 * $border-size) + (2 * $text-padding)) // subtracted the border and text padding
+}
