@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Post} from '../models/post.model';
+import {PostProp} from '../models/post-prop.enumeration';
 
 @Component({
   selector: 'app-square',
@@ -8,34 +9,23 @@ import {Post} from '../models/post.model';
 })
 export class SquareComponent implements OnInit {
   @Input() post: Post;
-  displayText: string | number;
-  currentPostPropIndex: number;
-  postKeys: Array<string>;
+  displayNum: number;
+  postProp: PostProp;
 
   constructor() {
   }
 
   ngOnInit(): void {
-    this.postKeys = Object.keys(this.post);
-    this.currentPostPropIndex = 0;
-    this.setDisplayText();
+    this.toggleDisplayNum();
   }
 
-  setDisplayText(): void {
-    this.displayText = this.post[this.postKeys[this.currentPostPropIndex]];
-
-  }
-
-  toggleDisplayText(): void {
-    if (this.currentPostPropIndex + 1 < this.postKeys.length) {
-      this.currentPostPropIndex++;
+  toggleDisplayNum(): void {
+    if (this.postProp === PostProp.id) {
+      this.postProp = PostProp.userId;
+      this.displayNum = this.post.getUserId();
     } else {
-      this.currentPostPropIndex = 0;
+      this.postProp = PostProp.id;
+      this.displayNum = this.post.getId();
     }
-    this.setDisplayText();
-  }
-
-  isNumber(displayText: any): boolean {
-    return !isNaN(displayText);
   }
 }

@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SquareComponent} from './square.component';
 import {Post} from '../models/post.model';
+import {PostProp} from '../models/post-prop.enumeration';
 
 describe('SquareComponent', () => {
   let component: SquareComponent;
@@ -25,41 +26,20 @@ describe('SquareComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get post object keys and set display text on init', () => {
-    const setDisplayTextSpy = spyOn(component, 'setDisplayText');
+  it('should toggle display number on init', () => {
+    const setDisplayNumSpy = spyOn(component, 'toggleDisplayNum');
     component.ngOnInit();
-    expect(component.postKeys).toBeDefined();
-    expect(component.currentPostPropIndex).toBeDefined();
-    expect(component.currentPostPropIndex).toBe(0);
-    expect(setDisplayTextSpy).toHaveBeenCalled();
+    expect(setDisplayNumSpy).toHaveBeenCalled();
+    expect(component.postProp).toBe(PostProp.id);
+    expect(component.displayNum).toBe(2);
   });
 
-  it('should set displayText to the currently selected post property', () => {
-    component.ngOnInit();
-
-    component.setDisplayText();
-
-    expect(component.displayText).toBeDefined();
-    expect(component.displayText).toBe(2);
+  it('should toggle display number based on toggle', () => {
+    component.postProp = PostProp.id;
+    component.displayNum = 2;
+    component.toggleDisplayNum();
+    expect(component.displayNum).toBe(1);
+    component.toggleDisplayNum();
+    expect(component.displayNum).toBe(2);
   });
-
-  it('should toggle display text based on post properties', () => {
-    component.currentPostPropIndex = 2; // title
-    const setDisplayTextSpy = spyOn(component, 'setDisplayText').and.callThrough();
-    component.toggleDisplayText(); // emulates a click
-    expect(setDisplayTextSpy).toHaveBeenCalled();
-    expect(component.displayText).toBe('Hello world');
-
-    // edge case
-    component.currentPostPropIndex = 3;
-    component.toggleDisplayText();
-    expect(component.currentPostPropIndex).toBe(0);
-  });
-
-  it('should check if a value is a number', () => {
-    expect(component.isNumber('123')).toBeTruthy();
-    expect(component.isNumber(123)).toBeTruthy();
-    expect(component.isNumber('xyz')).toBeFalsy();
-  });
-
 });
