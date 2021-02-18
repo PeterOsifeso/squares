@@ -2,8 +2,10 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SquareComponent} from './square.component';
 import {Post} from '../models/post.model';
+
 import {PostsService} from '../services/posts.service';
 import {PostsServiceMock} from '../tests/mock/PostsServiceMock';
+import {PostProp} from '../models/post-prop.enumeration';
 import {of, Subscription} from 'rxjs';
 
 describe('SquareComponent', () => {
@@ -33,57 +35,33 @@ describe('SquareComponent', () => {
     expect(component).toBeTruthy();
   });
 
+
   it('should fetch post from service on component init', () => {
     const fetchPostsSpy = spyOn(component, 'fetchPost');
     component.ngOnInit();
     expect(fetchPostsSpy).toHaveBeenCalled();
   });
 
-  it('should get post object keys and set display text on init', () => {
-    const setDisplayTextSpy = spyOn(component, 'setDisplayText');
+
+  it('should fetch a particular post', () => {
     const getPostServiceSpy = spyOn(postsServiceMock, 'getPost').and.returnValue(of(mockPost));
-    component.index = 0;
-
+    const toggleDisplayNumSpy = spyOn(component, 'toggleDisplayNum');
+    component.index = 2;
     component.fetchPost();
-    expect(getPostServiceSpy).toHaveBeenCalledWith(0);
-    expect(component.post).toBeDefined();
+    expect(component.postSubscription).toBeDefined();
+    expect(getPostServiceSpy).toHaveBeenCalledWith(2);
     expect(JSON.stringify(component.post)).toBe(JSON.stringify(mockPost));
-    expect(component.postKeys).toBeDefined();
-    expect(component.currentPostPropIndex).toBeDefined();
-    expect(component.currentPostPropIndex).toBe(0);
-    expect(setDisplayTextSpy).toHaveBeenCalled();
+    expect(toggleDisplayNumSpy).toHaveBeenCalled();
   });
 
-  it('should set displayText to the currently selected post property', () => {
+  it('should toggle display number based on toggle', () => {
     component.post = mockPost;
-    component.postKeys = Object.keys(mockPost);
-    component.currentPostPropIndex = 0; // post.id
-    component.setDisplayText();
-
-    expect(component.displayText).toBeDefined();
-    expect(component.displayText).toBe(2);
-  });
-
-  it('should toggle display text based on post properties', () => {
-    component.post = mockPost;
-    component.postKeys = Object.keys(mockPost);
-    component.currentPostPropIndex = 2; // title
-
-    const setDisplayTextSpy = spyOn(component, 'setDisplayText').and.callThrough();
-    component.toggleDisplayText();
-    expect(setDisplayTextSpy).toHaveBeenCalled();
-    expect(component.displayText).toBe('Hello world');
-
-    // edge case
-    component.currentPostPropIndex = component.postKeys.length - 1;
-    component.toggleDisplayText();
-    expect(component.currentPostPropIndex).toBe(0);
-  });
-
-  it('should check if a value is a number', () => {
-    expect(component.isNumber('123')).toBeTruthy();
-    expect(component.isNumber(123)).toBeTruthy();
-    expect(component.isNumber('xyz')).toBeFalsy();
+    component.postProp = PostProp.id;
+    component.displayNum = 2;
+    component.toggleDisplayNum();
+    expect(component.displayNum).toBe(1);
+    component.toggleDisplayNum();
+    expect(component.displayNum).toBe(2);
   });
 
   it('should unsubscribe from post subscription on component destroy', () => {
@@ -91,4 +69,5 @@ describe('SquareComponent', () => {
     component.ngOnDestroy();
     expect(component.postSubscription.closed).toBeTruthy();
   });
+
 });

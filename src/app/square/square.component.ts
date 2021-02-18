@@ -2,6 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Post} from '../models/post.model';
 import {PostsService} from '../services/posts.service';
 import {Subscription} from 'rxjs';
+import {PostProp} from '../models/post-prop.enumeration';
 
 @Component({
   selector: 'app-square',
@@ -11,10 +12,9 @@ import {Subscription} from 'rxjs';
 export class SquareComponent implements OnInit, OnDestroy {
   @Input() index: number;
   post: Post;
-  displayText: string | number;
-  currentPostPropIndex: number;
-  postKeys: Array<string>;
   postSubscription: Subscription;
+  displayNum: number;
+  postProp: PostProp;
 
   constructor(private postService: PostsService) {
   }
@@ -24,32 +24,22 @@ export class SquareComponent implements OnInit, OnDestroy {
   }
 
   fetchPost(): void {
-    this.postService.getPost(this.index).subscribe(
+    this.postSubscription = this.postService.getPost(this.index).subscribe(
       post => {
         this.post = post;
-        this.postKeys = Object.keys(this.post);
-        this.currentPostPropIndex = 0;
-        this.setDisplayText();
+        this.toggleDisplayNum();
       }
     );
   }
 
-  setDisplayText(): void {
-    this.displayText = this.post[this.postKeys[this.currentPostPropIndex]];
-
-  }
-
-  toggleDisplayText(): void {
-    if (this.currentPostPropIndex + 1 < this.postKeys.length) {
-      this.currentPostPropIndex++;
+  toggleDisplayNum(): void {
+    if (this.postProp === PostProp.id) {
+      this.postProp = PostProp.userId;
+      this.displayNum = this.post.getUserId();
     } else {
-      this.currentPostPropIndex = 0;
+      this.postProp = PostProp.id;
+      this.displayNum = this.post.getId();
     }
-    this.setDisplayText();
-  }
-
-  isNumber(displayText: any): boolean {
-    return !isNaN(displayText);
   }
 
   ngOnDestroy(): void {
