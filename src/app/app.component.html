@@ -1,5 +1,5 @@
-<section class="squares-container">
+<section class="squares-container" *ngIf="(getPosts$() | async) as posts">
   <h2 *ngIf="!posts && !errorMessage">Fetching posts....</h2>
   <h2 *ngIf="errorMessage">{{errorMessage}}</h2>
-  <app-square *ngFor="let post of posts" [post]="post"></app-square>
+  <app-square *ngFor="let post of posts; index as i" [index]="i"></app-square>
 </section>

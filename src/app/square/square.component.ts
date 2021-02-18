@@ -1,24 +1,37 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Post} from '../models/post.model';
+import {PostsService} from '../services/posts.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-square',
   templateUrl: './square.component.html',
   styleUrls: ['./square.component.scss']
 })
-export class SquareComponent implements OnInit {
-  @Input() post: Post;
+export class SquareComponent implements OnInit, OnDestroy {
+  @Input() index: number;
+  post: Post;
   displayText: string | number;
   currentPostPropIndex: number;
   postKeys: Array<string>;
+  postSubscription: Subscription;
 
-  constructor() {
+  constructor(private postService: PostsService) {
   }
 
   ngOnInit(): void {
-    this.postKeys = Object.keys(this.post);
-    this.currentPostPropIndex = 0;
-    this.setDisplayText();
+    this.fetchPost();
+  }
+
+  fetchPost(): void {
+    this.postService.getPost(this.index).subscribe(
+      post => {
+        this.post = post;
+        this.postKeys = Object.keys(this.post);
+        this.currentPostPropIndex = 0;
+        this.setDisplayText();
+      }
+    );
   }
 
   setDisplayText(): void {
@@ -37,5 +50,11 @@ export class SquareComponent implements OnInit {
 
   isNumber(displayText: any): boolean {
     return !isNaN(displayText);
+  }
+
+  ngOnDestroy(): void {
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
+    }
   }
 }
