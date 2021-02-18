@@ -3,7 +3,8 @@ $square-size: 150px;
 $border-size: 1px;
 $border-color: #d3d3d3;
 $text-padding: 2px;
-$font-size: 15pt;
+$font-size: 35pt;
+$font-weight: 100;
 
 .square-container {
   width: $square-size;
@@ -18,6 +19,7 @@ $font-size: 15pt;
   user-select: none;
   padding: $text-padding;
   font-family: "Helvetica Neue", serif;
+  font-weight: $font-weight;
 }
 
 .centralize {
